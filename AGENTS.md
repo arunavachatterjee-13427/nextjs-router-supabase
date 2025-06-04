@@ -1,42 +1,87 @@
 # AGENTS.md
 
-## Project Overview
-Build a smart blogging assistant SaaS application using Next.js App Router (v14+), Supabase, and the OpenAI API, following the Makerkit.dev course structure.
+## Core Stack Requirements
+- Next.js 14+ with App Router
+- TypeScript 5.3+
+- Tailwind CSS 3.4+
+- Supabase JS Client v5
+- Vercel AI SDK 3.1+
 
-## Coding Standards
-- Use TypeScript for all code files.
-- Follow Next.js App Router conventions:
-  - Place all pages, layouts, templates, and API routes in the `app` directory.
-  - Use `page.tsx` for pages, `layout.tsx` for layouts, `template.tsx` for templates, and `route.ts` for API handlers.
-- Use Tailwind CSS for styling.
-- Prefer functional React components.
-- Use `use client` directive for interactive/client components.
-- Use `use server` directive for server actions.
+## Directory Structure Rules
+### App Router Convention
+```
+// Route handlers: app/api/[route]/route.ts
+export async function GET(request: Request) {
+  // Implementation
+}
+```
 
-## Architecture & Features
-- Implement authentication using Supabase.
-- Store and retrieve data from Supabase (Postgres).
-- Integrate the OpenAI API via the Vercel AI SDK for content generation.
-- Implement CRUD operations for blog posts.
-- Add Stripe integration for payments and subscription management.
-- Enforce permissions and usage thresholds based on subscription plan.
-- Prepare for deployment to Vercel and Supabase.
+### Component Organization
+```
+app/
+  components/
+    ui/ # Shadcn/ui components
+    core/ # Business logic components
+  lib/ # Shared utilities
+```
 
-## Best Practices
-- Write clear, concise, and well-documented code.
-- Use environment variables for API keys and secrets.
-- Validate all user input.
-- Ensure accessibility (a11y) in UI components.
-- Write reusable and modular components.
+## Supabase Integration Standards
+```
+// lib/supabase/client.ts
+import { createClient } from '@supabase/supabase-js'
 
-## Testing & Linting
-- Use ESLint and Prettier for code formatting and linting.
-- Add basic tests for critical business logic (if possible).
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+```
 
-## Pull Requests & Commits
-- Use descriptive commit messages (e.g., `[Feature] Add Supabase auth flow`).
-- Summarize changes and testing steps in pull requests.
+## AI Implementation Rules
+```
+// app/api/chat/route.ts
+export const runtime = 'edge'
 
-## Additional Notes
-- Reference the Makerkit.dev course for step-by-step implementation.
-- Ask for clarification if requirements are ambiguous.
+export async function POST(req: Request) {
+  const { messages } = await req.json()
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4',
+    stream: true,
+    messages
+  })
+  return new StreamingTextResponse(response)
+}
+```
+
+## Validation Workflow
+```
+# Pre-commit checks
+npm run lint && npm run type-check && npm run test:ci
+
+# Security scan
+npx snyk test --severity-threshold=high
+```
+
+## PR Guidelines
+### Title Format
+`[Lesson X] [Feature|Fix|Chore] Brief description`
+
+### Required Sections
+```
+## Changes Made
+- List structural changes
+
+## Testing Performed
+- [ ] Local dev server
+- [ ] Type checking
+- [ ] Cross-browser (Chrome, Safari, Firefox)
+```
+
+## Course Implementation
+Follow structure from:  
+https://makerkit.dev/courses/nextjs-app-router
+
+### Key Requirements
+1. Implement blog post editor from Chapter 3
+2. Add subscription tiers from Chapter 5
+3. Configure Vercel deployment per Chapter 8
+```

@@ -1,0 +1,12 @@
+model: o4-mini-pro
+approval_mode: auto-edit
+full_auto_error_mode: ask-user
+security:
+  web_whitelist:
+    - domain: makerkit.dev
+      paths: [/courses/nextjs-app-router/]
+providers:
+  - name: OpenAI
+    base_url: https://api.openai.com/v1
+    env_key: OPENAI_API_KEY
+internet_access: true
